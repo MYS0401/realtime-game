@@ -1,0 +1,34 @@
+@startuml
+' 図に表示する要素を定義
+actor UserA as ユーザーA
+participant MagicOnion
+actor UserB as ユーザーB
+actor UserC as ユーザーC
+
+' 処理に連番を自動付与
+autonumber
+
+' 接続
+note over ユーザーA: 名前を入力する
+ユーザーA --> MagicOnion: 接続
+
+MagicOnion -> ユーザーA: 参加者情報
+
+' 接続
+note over ユーザーB: 名前を入力する
+ユーザーB --> MagicOnion: 接続
+
+MagicOnion -> ユーザーB: 参加者情報
+MagicOnion -> ユーザーA: 参加通知
+
+' 接続
+note over ユーザーC: 名前を入力する
+ユーザーC --> MagicOnion: 接続
+
+MagicOnion -> ユーザーC: 参加者情報
+
+MagicOnion -> ユーザーA: 参加通知
+
+MagicOnion -> ユーザーB: 参加通知
+
+@enduml

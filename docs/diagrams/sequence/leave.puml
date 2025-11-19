@@ -1,0 +1,29 @@
+@startuml
+' 図に表示する要素を定義
+actor UserA as ユーザーA
+participant MagicOnion
+actor UserB as ユーザーB
+actor UserC as ユーザーC
+
+' 処理に連番を自動付与
+autonumber
+
+' 退出
+ユーザーA -> MagicOnion:退出リクエスト
+ユーザーA <--> MagicOnion:切断
+
+MagicOnion -> ユーザーB:退出通知
+MagicOnion -> ユーザーB:参加者情報
+
+MagicOnion -> ユーザーC:退出通知
+
+' 退出
+ユーザーB -> MagicOnion:退出リクエスト
+ユーザーB <--> MagicOnion:切断
+
+MagicOnion -> ユーザーC:退出通知
+
+' 退出
+ユーザーC -> MagicOnion:退出リクエスト
+ユーザーC <--> MagicOnion:切断
+@enduml
