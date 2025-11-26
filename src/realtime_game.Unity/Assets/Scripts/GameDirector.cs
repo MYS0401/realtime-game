@@ -1,9 +1,11 @@
+using DG.Tweening;
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Entities;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class GameDirector : MonoBehaviour
 {
@@ -14,6 +16,8 @@ public class GameDirector : MonoBehaviour
     bool connect2 = false;
     RoomModel roomModel;
     UserModel userModel;
+
+    [SerializeField] Rigidbody rg;
 
     Dictionary<Guid, GameObject> characterList = new Dictionary<Guid, GameObject>();
 
@@ -29,6 +33,8 @@ public class GameDirector : MonoBehaviour
         roomModel.OnJoinedUser += this.OnJoinedUser;
 
         roomModel.OnLeavedUser += this.OnLeavedUser;
+
+        roomModel.OnMoveCharacter += this.OnMoveUser;
 
         //接続
         await roomModel.ConnectAsync();
@@ -50,6 +56,8 @@ public class GameDirector : MonoBehaviour
                 Debug.Log("GetUser failed");
                 Debug.Log(e);
             }
+
+            InvokeRepeating(nameof(Move),1f,0.1f);
 
             //入室
             await roomModel.JoinAsync("sampleRoom", myUserId);
@@ -96,7 +104,7 @@ public class GameDirector : MonoBehaviour
             }
 
             //退出
-            await roomModel.LeaveAsync("sampleRoom", myUserId);
+            await roomModel.LeaveAsync();
 
             foreach (var obj in characterList.Values)
             {
@@ -111,6 +119,8 @@ public class GameDirector : MonoBehaviour
     private void OnLeavedUser(Guid Id)
     {
         Debug.Log($"[OnLeavedUser] Id: {Id}");
+
+        CancelInvoke(nameof(Move));
 
         if (characterList.ContainsKey(Id))
         {
@@ -128,7 +138,33 @@ public class GameDirector : MonoBehaviour
         }
     }
 
-    public  void InputText()
+    // 自分以外のユーザーの移動を反映
+    private void OnMoveUser(Guid connectionId, Vector3 pos, Quaternion quaternion)
+    {
+        // いない人は移動できない
+        if (!characterList.ContainsKey(connectionId))
+        {
+            return;
+        }
+
+        // DOTweenを使うことでなめらかに動く！
+        characterList[connectionId].transform.DOMove(pos, 0.1f);
+
+        characterList[connectionId].transform.DORotateQuaternion(quaternion, 0.1f);
+        //characterList[connectionId].transform.position = pos;
+
+    }
+
+    public async void Move()
+    {
+
+        Debug.Log("Move" + rg.transform.position + rg.transform.rotation);
+        
+        await roomModel.MoveAsync(rg.transform.position,rg.transform.rotation);
+    }
+
+
+    public void InputText()
     {
         connect1 = true;
     }

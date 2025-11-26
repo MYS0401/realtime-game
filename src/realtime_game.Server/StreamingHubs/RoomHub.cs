@@ -2,6 +2,7 @@
 using realtime_game.Server.Models.Contexts;
 using realtime_game.Shared.Models.Entities;
 using realtime_game.Shared.Interfaces.StreamingHubs;
+using UnityEngine;
 
 namespace realtime_game.Server.StreamingHubs
 {
@@ -60,7 +61,7 @@ namespace realtime_game.Server.StreamingHubs
         }
 
         //ルームから退出
-        public Task LeaveAsync(string roomName, int userId)
+        public Task LeaveAsync()
         {
             //　退室したことを全メンバーに通知
             this.roomContext.Group.All.OnLeave(this.ConnectionId);
@@ -81,6 +82,7 @@ namespace realtime_game.Server.StreamingHubs
         // 切断時の処理
         protected override ValueTask OnDisconnected()
         {
+            //LeaveAsync();
             return default;
         }
 
@@ -89,7 +91,21 @@ namespace realtime_game.Server.StreamingHubs
         {
             return Task.FromResult<Guid>(this.ConnectionId);
         }
-        
+
+        //移動処理
+        public Task MoveAsync(Vector3 pos, Quaternion quaternion)
+        {
+            // 位置情報を記録
+            this.roomContext.RoomUserDataList[this.ConnectionId].pos = pos;
+            this.roomContext.RoomUserDataList[this.ConnectionId].quaternion = quaternion;
+
+            // 移動情報を自分以外の全メンバーに通知
+            this.roomContext.Group.Except([this.ConnectionId]).OnMove(this.ConnectionId, pos,quaternion);
+
+            return Task.CompletedTask;
+
+        }
+
     }
 }
 

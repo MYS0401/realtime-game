@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace realtime_game.Shared.Interfaces.StreamingHubs
 {
@@ -23,7 +24,10 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
 
         //ユーザー退出
         //Task<JoinedUser[]> LeaveAsync(string roomName, int userId);
-        Task LeaveAsync(string roomName, int userId);
+        Task LeaveAsync();
+
+        //ユーザー移動
+        Task MoveAsync(Vector3 pos, Quaternion quaternion);
     }
 
 }

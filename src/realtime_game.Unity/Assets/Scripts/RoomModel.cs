@@ -3,7 +3,10 @@ using MagicOnion.Client;
 using MagicOnion;
 using System;
 using UnityEngine;
+using System.Numerics;
 using realtime_game.Shared.Interfaces.StreamingHubs;
+using Vector3 = UnityEngine.Vector3;
+using Quaternion = UnityEngine.Quaternion;
 
 public class RoomModel : BaseModel,IRoomHubReceiver
 {
@@ -18,6 +21,9 @@ public class RoomModel : BaseModel,IRoomHubReceiver
 
     //ユーザーの退出通知
     public Action<Guid> OnLeavedUser { get; set; }
+
+    //ユーザーの位置通知
+    public Action<Guid,Vector3,Quaternion> OnMoveCharacter { get; set; }
 
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -74,13 +80,13 @@ public class RoomModel : BaseModel,IRoomHubReceiver
 
 
     //退出
-    public async UniTask LeaveAsync(string roomName, int userId)
+    public async UniTask LeaveAsync()
     {
 
         Debug.Log("LeaveAsync");
         if (roomHub != null)
         {
-            await roomHub.LeaveAsync(roomName, userId);
+            await roomHub.LeaveAsync();
         }
     }
 
@@ -93,6 +99,20 @@ public class RoomModel : BaseModel,IRoomHubReceiver
         {
             OnLeavedUser(Id);
         }
+    }
+
+    //移動処理
+    public async UniTask MoveAsync(Vector3 pos, Quaternion quaternion)
+    {
+        await roomHub.MoveAsync(pos, quaternion);
+    }
+
+
+    //移動通知
+
+    public void OnMove(Guid connectionId, Vector3 pos,Quaternion quaternion)
+    {
+        OnMoveCharacter(connectionId, pos, quaternion);
     }
 }
 
