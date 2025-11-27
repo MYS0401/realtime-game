@@ -7,7 +7,7 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 {
     public List<SplineContainer> splines; // すべてのスプライン
     public int currentSplineIndex = 0;     // 現在のスプライン
-    public float moveSpeed = 3f;
+    public float moveSpeed = 0.2f;
     public float rotateSpeed = 10f;
 
     Rigidbody rb;
@@ -46,7 +46,7 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
                     t = 0.91f;
                 }
 
-                if (t >= 0.182f && 0.186f >= t)
+                if (t >= 0.182f && 0.188f >= t)
                 {      
                     currentSplineIndex = 1;      
                     t = 0.192f;
@@ -75,7 +75,7 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
                     t = 0.065f;
                 }
 
-                if (t >= 0.19f && 0.195f >= t)
+                if (t >= 0.19f && 0.196f >= t)
                 {               
                     currentSplineIndex = 0;
                     t = 0.184f;
