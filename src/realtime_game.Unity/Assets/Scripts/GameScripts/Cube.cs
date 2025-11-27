@@ -18,6 +18,7 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        t = 0.11f;
     }
 
     void Update()
@@ -36,7 +37,7 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 
         // 分岐判定
         if(currentSplineIndex == 0)
-        {//白色上分岐地点
+        {//白線上分岐地点
             if (Input.GetKeyUp(KeyCode.E))
             {
                 if (t >= 0.06f && 0.07f >= t)
@@ -106,13 +107,5 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotateSpeed * Time.deltaTime);
         }
-    }
-
-    void SwitchSpline()
-    {
-        // 次のスプラインに切り替え（ループ）
-        //currentSplineIndex = (currentSplineIndex + 1) % splines.Count;
-
-
     }
 }
