@@ -10,7 +10,9 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
     public float moveSpeed = 3f;
     public float rotateSpeed = 10f;
 
-    public float t = 0f;
+    Rigidbody rb;
+
+    public float t = 0;
     private CharacterController controller;
 
     void Start()
@@ -32,21 +34,66 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
         t = (t + delta) % 1f;
         if (t < 0) t += 1f;
 
-        // 分岐判定：t が 0.9 を超えたら次のスプラインに切り替え
-        if (t >= 0.5f)
-        {
-            if (Input.GetKey(KeyCode.Q))
+        // 分岐判定
+        if(currentSplineIndex == 0)
+        {//白色上分岐地点
+            if (Input.GetKeyUp(KeyCode.E))
             {
-                currentSplineIndex = 0;
-            }
-            else if (Input.GetKey(KeyCode.E))
-            {
-                currentSplineIndex = 1;
-            }   
-                
+                if (t >= 0.06f && 0.07f >= t)
+                {
+                    currentSplineIndex = 1;
+                    t = 0.91f;
+                }
 
-            //t = 0f;
+                if (t >= 0.182f && 0.186f >= t)
+                {      
+                    currentSplineIndex = 1;      
+                    t = 0.192f;
+                }
+
+                if (t >= 0.558f && 0.564f >= t)
+                {
+                    currentSplineIndex = 1;
+                    t = 0.412f;
+                }
+
+                if (t >= 0.682f && 0.687f >= t)
+                {
+                    currentSplineIndex = 1;
+                    t = 0.694f;
+                }
+            }
         }
+        else if (currentSplineIndex == 1)
+        {//青線上分岐地点
+            if (Input.GetKeyUp(KeyCode.E))
+            {
+                if (t >= 0.9f && 0.95f >= t)
+                {       
+                    currentSplineIndex = 0;           
+                    t = 0.065f;
+                }
+
+                if (t >= 0.19f && 0.195f >= t)
+                {               
+                    currentSplineIndex = 0;
+                    t = 0.184f;
+                }
+
+                if (t >= 0.41f && 0.415f >= t)
+                {
+                    currentSplineIndex = 0;
+                    t = 0.56f;
+                }
+
+                if (t >= 0.692f && 0.696f >= t)
+                {
+                    currentSplineIndex = 0;
+                    t = 0.684f;
+                }
+            }
+        }
+        
     
 
         Vector3 pos = splines[currentSplineIndex].EvaluatePosition(t);

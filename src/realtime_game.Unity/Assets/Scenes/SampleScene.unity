@@ -779,6 +779,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 472020645}
   m_CullTransparentMesh: 1
+--- !u!114 &509417423 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3543460157453700747, guid: a3c1233386a60a54dba762e46e334feb, type: 3}
+  m_PrefabInstance: {fileID: 5269737516803140264}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dab5c7d4c32e743048dfca98e2d5914f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &575165558
 GameObject:
   m_ObjectHideFlags: 0
@@ -2220,6 +2231,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5167134590243786472, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
+      propertyPath: splineContainer
+      value: 
+      objectReference: {fileID: 509417423}
+    - target: {fileID: -5167134590243786472, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
+      propertyPath: splines.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5167134590243786472, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
+      propertyPath: 'splines.Array.data[0]'
+      value: 
+      objectReference: {fileID: 509417423}
+    - target: {fileID: 559428179649302594, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1404757485517204278, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
       propertyPath: m_Name
       value: Cube
@@ -2264,7 +2291,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1104437208855228291, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2280,6 +2308,18 @@ PrefabInstance:
     - target: {fileID: 2638467690410468367, guid: a3c1233386a60a54dba762e46e334feb, type: 3}
       propertyPath: m_Name
       value: Spline
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437388279095173088, guid: a3c1233386a60a54dba762e46e334feb, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.629202
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437388279095173088, guid: a3c1233386a60a54dba762e46e334feb, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 8.539903
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437388279095173088, guid: a3c1233386a60a54dba762e46e334feb, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 9.64103
       objectReference: {fileID: 0}
     - target: {fileID: 6437388279095173088, guid: a3c1233386a60a54dba762e46e334feb, type: 3}
       propertyPath: m_LocalPosition.x

@@ -13,7 +13,7 @@ public class GameDirector : MonoBehaviour
     //[SerializeField] RoomModel roomModel;
     [SerializeField] InputField InputField;
     bool connect1 = false;
-    bool connect2 = false;
+    //bool connect2 = false;
     RoomModel roomModel;
     UserModel userModel;
 
@@ -106,6 +106,10 @@ public class GameDirector : MonoBehaviour
             //ëﬁèo
             await roomModel.LeaveAsync();
 
+            //èâä˙à íu,âÒì]Ç…ñﬂÇ∑
+            //rg.position = Vector3.zero;
+            //rg.rotation = Quaternion.identity;
+      
             foreach (var obj in characterList.Values)
             {
                 Destroy(obj);
