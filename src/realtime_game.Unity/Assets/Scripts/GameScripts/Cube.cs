@@ -23,6 +23,8 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 
     void Update()
     {
+        //カウントダウン中は入力を受け付けない
+        if (InputBlocker.isBlocked) return;
         if (splines.Count == 0) return;
 
         var spline = splines[currentSplineIndex].Spline;

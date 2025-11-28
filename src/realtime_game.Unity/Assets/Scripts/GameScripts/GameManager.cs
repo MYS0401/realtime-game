@@ -4,12 +4,17 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    //カウントダウン
     public Text countdownText;
-    public int startCount = 3;
+    public int startCount = 3;//秒数
     //public GameObject plane;
+
+    //public MonoBehaviour playerController;
 
     void Start()
     {
+        
+
         countdownText.gameObject.SetActive(true);
         //plane.SetActive(true);
         StartCoroutine(CountDownCoroutine());
@@ -17,6 +22,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator CountDownCoroutine()
     {
+
+        //playerController.enabled = false;
+        InputBlocker.isBlocked = true;
         int count = startCount;
 
         while (count > 0)
@@ -25,6 +33,9 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             count--;
         }
+
+        //playerController.enabled = true;
+        InputBlocker.isBlocked = false;
 
         countdownText.text = "START!";
         yield return new WaitForSeconds(1f);
