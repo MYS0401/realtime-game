@@ -1,0 +1,53 @@
+@startuml
+actor UserA as ユーザーA
+participant MagicOnion
+actor UserB as ユーザーB
+actor UserC as ユーザーC
+
+autonumber
+
+group ゲーム開始処理
+    MagicOnion -> ユーザーA: ゲームスタート
+    MagicOnion -> ユーザーB: ゲームスタート
+    MagicOnion -> ユーザーC: ゲームスタート
+
+note over MagicOnion: 誰が鬼か決める
+
+MagicOnion -> ユーザーA: 誰が鬼か通知
+MagicOnion -> ユーザーB: 誰が鬼か通知
+MagicOnion -> ユーザーC: 誰が鬼か通知
+
+end
+
+note over ユーザーA: スタート
+note over ユーザーB: スタート
+note over ユーザーC: スタート
+
+loop 残り時間の更新（60秒間)
+ユーザーA -> MagicOnion: 残り時間
+MagicOnion -> ユーザーA: 残り時間
+MagicOnion -> ユーザーB: 残り時間
+MagicOnion -> ユーザーC: 残り時間
+end
+
+note over ユーザーA: エンド
+note over ユーザーB: エンド
+note over ユーザーC: エンド
+
+group  結果送信フェーズ
+  alt 鬼（例：ユーザーA）
+    ユーザーA -> MagicOnion: 何人捕まえたか
+  else 逃走側
+    ユーザーB -> MagicOnion: 逃げ切れたか
+    ユーザーC -> MagicOnion: 逃げ切れたか
+  end
+end
+
+note over MagicOnion:全ユーザーの結果を確認中
+
+group 結果通知
+  MagicOnion -> ユーザーA: 結果
+  MagicOnion -> ユーザーB: 結果
+  MagicOnion -> ユーザーC: 結果
+end
+@enduml
