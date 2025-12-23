@@ -21,12 +21,17 @@ public class GameDirector : MonoBehaviour
 
     Dictionary<Guid, GameObject> characterList = new Dictionary<Guid, GameObject>();
 
+    Dictionary<Guid, string> memberNames = new();
+
     int myUserId; //自分のユーザーID
     User myself; //自分のユーザー情報を保持
 
     bool justWarped = false;
 
     Guid myConnectionId;
+
+    [SerializeField] Text memberText;
+
 
     async void Start()
     {
@@ -70,7 +75,8 @@ public class GameDirector : MonoBehaviour
             }
 
             //入室
-            await roomModel.JoinAsync("sampleRoom", myUserId);
+            //await roomModel.JoinAsync("sampleRoom", myUserId);
+            var joinedUsers = roomModel.JoinAsync("sampleRoom", myUserId);
 
             InvokeRepeating(nameof(Move), 1f, 0.1f);
         }
@@ -100,6 +106,9 @@ public class GameDirector : MonoBehaviour
         remotePlayer.ConnectionId = user.ConnectionId;
 
         characterList[user.ConnectionId] = characterObject;  //フィールドで保持
+
+        memberNames[user.ConnectionId] = user.UserData.Name;
+        RefreshMemberUI();
     }
 
     public async void LeaveRoom()
@@ -149,6 +158,9 @@ public class GameDirector : MonoBehaviour
 
             Destroy(obj);
             characterList.Remove(Id);
+
+            memberNames.Remove(Id);
+            RefreshMemberUI();
 
             Debug.Log("[OnLeavedUser] Destroyed.");
         }
@@ -214,6 +226,18 @@ public class GameDirector : MonoBehaviour
         if (fromId != myConnectionId && toId != myConnectionId)
             return;
 
-        Debug.Log($"接触発生 from:{fromId} to:{toId}");
+            Debug.Log($"接触発生 from:{fromId} to:{toId}");
+    }
+
+    //参加者一覧
+    void RefreshMemberUI()
+    {
+        //memberText.text += name;
+
+        memberText.text = "";
+        foreach (var name in memberNames.Values)
+        {
+            memberText.text += name + "\n";
+        }
     }
 }

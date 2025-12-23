@@ -113,7 +113,7 @@ namespace realtime_game.Server.StreamingHubs
             // 本当に同じルームかチェック（重要）
             if (!roomContext.RoomUserDataList.ContainsKey(targetConnectionId))
                 return;
-
+            
             Console.WriteLine(targetConnectionId);
 
             // 全員 or 対象者に通知
