@@ -28,6 +28,9 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
 
         //ユーザー移動
         Task MoveAsync(Vector3 pos, Quaternion quaternion);
+
+        //接触定判
+        Task NotifyContactAsync(Guid targetConnectionId);
     }
 
 }

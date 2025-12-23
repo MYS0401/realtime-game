@@ -12,6 +12,8 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 
     Rigidbody rb;
 
+    RoomModel roomModel;
+
     public float t = 0;
     private CharacterController controller;
 
@@ -19,10 +21,16 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 
     bool justWarped = false;
 
+    //接触クールタイム
+    float lastContactTime = -1f;
+    const float CONTACT_COOLDOWN = 0.2f;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        
+
+        roomModel = FindObjectOfType<RoomModel>();
+
         t = 0.11f;
     }
 
@@ -122,9 +130,15 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("subplayer"))
-        {
-            Debug.Log("hitsubplayer");
-        }
+        if (Time.time - lastContactTime < CONTACT_COOLDOWN)
+            return;
+
+        if (!other.CompareTag("RemotePlayer")) return;
+
+        var remote = other.GetComponent<RemotePlayer>();
+        if (remote == null) return;
+
+        lastContactTime = Time.time;
+        roomModel.NotifyContactAsync(remote.ConnectionId);
     }
 }

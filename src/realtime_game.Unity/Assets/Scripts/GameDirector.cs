@@ -36,9 +36,14 @@ public class GameDirector : MonoBehaviour
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録しておく
         roomModel.OnJoinedUser += this.OnJoinedUser;
 
+        //退出
         roomModel.OnLeavedUser += this.OnLeavedUser;
 
+        //移動
         roomModel.OnMoveCharacter += this.OnMoveUser;
+
+        //接触
+        roomModel.OnContactReceived += this.OnContactReceived;
 
         //接続
         await roomModel.ConnectAsync();
@@ -90,6 +95,10 @@ public class GameDirector : MonoBehaviour
 
         GameObject characterObject = Instantiate(characterPrefab);  //インスタンス生成
         characterObject.transform.position = new Vector3(0, 0, 0);
+
+        var remotePlayer = characterObject.GetComponent<RemotePlayer>();
+        remotePlayer.ConnectionId = user.ConnectionId;
+
         characterList[user.ConnectionId] = characterObject;  //フィールドで保持
     }
 
@@ -198,5 +207,13 @@ public class GameDirector : MonoBehaviour
         return int.Parse(InputField.text);
     }
 
+    //接触判定
+    private void OnContactReceived(Guid fromId, Guid toId)
+    {
+        // 自分が関係ない接触は無視
+        if (fromId != myConnectionId && toId != myConnectionId)
+            return;
 
+        Debug.Log($"接触発生 from:{fromId} to:{toId}");
+    }
 }

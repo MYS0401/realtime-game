@@ -27,5 +27,8 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
 
         //ユーザーの移動通知
         void OnMove(Guid connectionId, Vector3 pos , Quaternion quaternion);
+
+        //ユーザーの接触判定
+        void OnContact(Guid fromConnectionId, Guid toConnectionId);
     }
 }

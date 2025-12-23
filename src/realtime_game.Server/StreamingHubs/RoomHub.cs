@@ -106,6 +106,20 @@ namespace realtime_game.Server.StreamingHubs
 
         }
 
+        public async Task NotifyContactAsync(Guid targetConnectionId)
+        {
+            var myId = this.ConnectionId;
+
+            // 本当に同じルームかチェック（重要）
+            if (!roomContext.RoomUserDataList.ContainsKey(targetConnectionId))
+                return;
+
+            Console.WriteLine(targetConnectionId);
+
+            // 全員 or 対象者に通知
+            roomContext.Group.Except([this.ConnectionId]).OnContact(myId, targetConnectionId);
+        }
+
     }
 }
 

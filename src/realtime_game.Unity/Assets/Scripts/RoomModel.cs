@@ -25,6 +25,9 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     //ユーザーの位置通知
     public Action<Guid,Vector3,Quaternion> OnMoveCharacter { get; set; }
 
+    //接触定判
+    public Action<Guid, Guid> OnContactReceived { get; set; }
+
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
@@ -117,6 +120,18 @@ public class RoomModel : BaseModel,IRoomHubReceiver
         if (OnMoveCharacter == null) return;
 
         OnMoveCharacter(connectionId, pos, quaternion);
+    }
+
+    //接触判定
+    public void OnContact(Guid fromId, Guid toId)
+    {
+        OnContactReceived?.Invoke(fromId, toId);
+    }
+
+    // 接触判定送信
+    public async void NotifyContactAsync(Guid targetConnectionId)
+    {
+        await roomHub.NotifyContactAsync(targetConnectionId);
     }
 }
 
