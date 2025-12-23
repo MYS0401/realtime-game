@@ -31,6 +31,9 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
 
         //接触定判
         Task NotifyContactAsync(Guid targetConnectionId);
+
+        //準備完了判定
+        Task SetReadyAsync(bool isReady);
     }
 
 }

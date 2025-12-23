@@ -30,5 +30,14 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
 
         //ユーザーの接触判定
         void OnContact(Guid fromConnectionId, Guid toConnectionId);
+
+        //準備完了通知
+        void OnReady(Guid connectionId, bool isReady);
+
+
+        //全員準備完了通知
+        void OnAllReady();
+
     }
+
 }

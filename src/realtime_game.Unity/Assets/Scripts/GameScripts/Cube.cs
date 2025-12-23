@@ -130,15 +130,15 @@ public class MoveOnSpline3D_Switch : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (Time.time - lastContactTime < CONTACT_COOLDOWN)
-           // return;
+        if (Time.time - lastContactTime < CONTACT_COOLDOWN)
+            return;
 
         if (!other.CompareTag("RemotePlayer")) return;
 
         var remote = other.GetComponent<RemotePlayer>();
         if (remote == null) return;
 
-        //lastContactTime = Time.time;
+        lastContactTime = Time.time;
         roomModel.NotifyContactAsync(remote.ConnectionId);
     }
 }

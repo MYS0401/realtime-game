@@ -7,6 +7,8 @@ using System.Numerics;
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class RoomModel : BaseModel,IRoomHubReceiver
 {
@@ -25,8 +27,14 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     //ユーザーの位置通知
     public Action<Guid,Vector3,Quaternion> OnMoveCharacter { get; set; }
 
-    //接触定判
+    //接触判定
     public Action<Guid, Guid> OnContactReceived { get; set; }
+
+    //準備完了通知
+    public Action<Guid, bool> OnReadyStateChangedReceived { get; set; }
+
+    //全員準備完了
+    public Action OnAllReadyReceived;
 
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -133,5 +141,28 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     {
         await roomHub.NotifyContactAsync(targetConnectionId);
     }
+
+    //準備完了通知
+    public void OnReady(Guid connectionId, bool isReady)
+    {
+        Debug.Log("OnReady received");
+
+        OnReadyStateChangedReceived?.Invoke(connectionId, isReady);
+    }
+
+    public async UniTask SetReadyAsync(bool isReady)
+    {
+        Debug.Log("SetReady");
+
+        await roomHub.SetReadyAsync(isReady);
+    }
+
+    //全員準備完了通知
+    public void OnAllReady()
+    {
+        OnAllReadyReceived?.Invoke();
+    }
+
+
 }
 

@@ -120,6 +120,28 @@ namespace realtime_game.Server.StreamingHubs
             roomContext.Group.Except([this.ConnectionId]).OnContact(myId, targetConnectionId);
         }
 
+        //準備完了通知
+        public Task SetReadyAsync(bool isReady)
+        {
+            Console.WriteLine($"[Server] SetReadyAsync {ConnectionId} : {isReady}");
+
+            var user = roomContext.RoomUserDataList[this.ConnectionId];
+            user.IsReady = isReady;
+
+            // 全員に通知
+            roomContext.Group.Except([this.ConnectionId]).OnReady(this.ConnectionId, isReady);
+
+            // 全員準備完了チェック
+            bool allReady = roomContext.RoomUserDataList.Values
+                .All(u => u.IsReady);
+
+            if (allReady)
+            {
+                roomContext.Group.Except([this.ConnectionId]).OnAllReady();
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }
 

@@ -50,6 +50,12 @@ public class GameDirector : MonoBehaviour
         //接触
         roomModel.OnContactReceived += this.OnContactReceived;
 
+        //準備完了
+        roomModel.OnReadyStateChangedReceived += (id, ready) =>
+        {
+            Debug.Log($"{id} Ready:{ready}");
+        };
+
         //接続
         await roomModel.ConnectAsync();
 
@@ -87,6 +93,9 @@ public class GameDirector : MonoBehaviour
     {
         //Debug.Log("Connection...");
 
+        memberNames[user.ConnectionId] = user.UserData.Name;
+        RefreshMemberUI();
+
         //すでに表示済みのユーザーは追加しない
         if (characterList.ContainsKey(user.ConnectionId))
         {
@@ -106,9 +115,6 @@ public class GameDirector : MonoBehaviour
         remotePlayer.ConnectionId = user.ConnectionId;
 
         characterList[user.ConnectionId] = characterObject;  //フィールドで保持
-
-        memberNames[user.ConnectionId] = user.UserData.Name;
-        RefreshMemberUI();
     }
 
     public async void LeaveRoom()
@@ -133,10 +139,12 @@ public class GameDirector : MonoBehaviour
             //退出
             await roomModel.LeaveAsync();
 
+            memberText.text = "";
+
             //初期位置,回転に戻す
             //rg.position = Vector3.zero;
             //rg.rotation = Quaternion.identity;
-      
+
             foreach (var obj in characterList.Values)
             {
                 Destroy(obj);
@@ -239,5 +247,12 @@ public class GameDirector : MonoBehaviour
         {
             memberText.text += name + "\n";
         }
+    }
+
+    //準備完了
+    public async void OnClickReady()
+    {
+        Debug.Log("READY");
+        await roomModel.SetReadyAsync(true);
     }
 }
