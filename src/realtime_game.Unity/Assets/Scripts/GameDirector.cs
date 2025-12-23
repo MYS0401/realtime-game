@@ -24,6 +24,10 @@ public class GameDirector : MonoBehaviour
     int myUserId; //自分のユーザーID
     User myself; //自分のユーザー情報を保持
 
+    bool justWarped = false;
+
+    Guid myConnectionId;
+
     async void Start()
     {
         roomModel = GetComponent<RoomModel>();
@@ -38,6 +42,9 @@ public class GameDirector : MonoBehaviour
 
         //接続
         await roomModel.ConnectAsync();
+
+        // 自分の ConnectionId を保存
+        myConnectionId =  roomModel.ConnectionId;
     }
 
     public async void JoinRoom()
@@ -57,10 +64,10 @@ public class GameDirector : MonoBehaviour
                 Debug.Log(e);
             }
 
-            InvokeRepeating(nameof(Move),1f,0.1f);
-
             //入室
             await roomModel.JoinAsync("sampleRoom", myUserId);
+
+            InvokeRepeating(nameof(Move), 1f, 0.1f);
         }
         
     }
@@ -103,6 +110,8 @@ public class GameDirector : MonoBehaviour
                 Debug.Log(e);
             }
 
+            CancelInvoke(nameof(Move));
+
             //退出
             await roomModel.LeaveAsync();
 
@@ -124,8 +133,6 @@ public class GameDirector : MonoBehaviour
     {
         Debug.Log($"[OnLeavedUser] Id: {Id}");
 
-        CancelInvoke(nameof(Move));
-
         if (characterList.ContainsKey(Id))
         {
             var obj = characterList[Id];
@@ -145,16 +152,21 @@ public class GameDirector : MonoBehaviour
     // 自分以外のユーザーの移動を反映
     private void OnMoveUser(Guid connectionId, Vector3 pos, Quaternion quaternion)
     {
+        if (connectionId == myConnectionId)
+            return;
+
         // いない人は移動できない
         if (!characterList.ContainsKey(connectionId))
         {
             return;
         }
 
-        // DOTweenを使うことでなめらかに動く！
-        characterList[connectionId].transform.DOMove(pos, 0.1f);
+        characterList[connectionId].transform.DOKill();
 
-        characterList[connectionId].transform.DORotateQuaternion(quaternion, 0.1f);
+        // DOTweenを使うことでなめらかに動く！
+        characterList[connectionId].transform.DOMove(pos, 0.15f);
+
+        characterList[connectionId].transform.DORotateQuaternion(quaternion, 0.15f);
         //characterList[connectionId].transform.position = pos;
 
     }
@@ -162,8 +174,16 @@ public class GameDirector : MonoBehaviour
     public async void Move()
     {
 
-        Debug.Log("Move" + rg.transform.position + rg.transform.rotation);
-        
+       //Debug.Log("Move" + rg.transform.position + rg.transform.rotation);
+
+        if (justWarped)
+        {
+            justWarped = false;
+            return;
+        }
+
+        if (rg == null) return;
+
         await roomModel.MoveAsync(rg.transform.position,rg.transform.rotation);
     }
 

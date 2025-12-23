@@ -112,6 +112,10 @@ public class RoomModel : BaseModel,IRoomHubReceiver
 
     public void OnMove(Guid connectionId, Vector3 pos,Quaternion quaternion)
     {
+        if (connectionId == this.ConnectionId) return;
+
+        if (OnMoveCharacter == null) return;
+
         OnMoveCharacter(connectionId, pos, quaternion);
     }
 }

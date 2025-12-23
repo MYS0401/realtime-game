@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,10 @@ public class GameManager : MonoBehaviour
 
     public Text endText;
 
+    public GameObject spline;
+
+    public bool can = true;
+
     //public MonoBehaviour playerController;
 
     void Start()
@@ -27,6 +32,28 @@ public class GameManager : MonoBehaviour
         countdownText.gameObject.SetActive(true);
         //plane.SetActive(true);
         StartCoroutine(CountDownCoroutine());//カウントダウン開始(StartCount)
+    }
+
+     void Update()
+    {
+        //カウントダウン中は入力を受け付けない
+        if (InputBlocker.isBlocked) return;
+
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            if(can)
+            {
+                spline.SetActive(false);
+                can = false;
+            }
+            else
+            {
+                spline.SetActive(true);
+                can = true;
+            }
+
+        }
+
     }
 
     IEnumerator CountDownCoroutine()

@@ -2232,6 +2232,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -5167134590243786472, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5167134590243786472, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
       propertyPath: splineContainer
       value: 
       objectReference: {fileID: 509417423}
@@ -2245,7 +2249,7 @@ PrefabInstance:
       objectReference: {fileID: 509417423}
     - target: {fileID: 559428179649302594, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1404757485517204278, guid: eb36bf18cce1f9a47a956972b6020eeb, type: 3}
       propertyPath: m_Name
