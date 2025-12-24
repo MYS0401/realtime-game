@@ -41,6 +41,8 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     public Action<int> OnCountdownStartReceived { get; set; }
     public Action OnCountdownCancelReceived { get; set; }
 
+    bool isDisconnecting = false;
+
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
@@ -53,15 +55,33 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     //　MagicOnion切断処理
     public async UniTask DisconnectAsync()
     {
-        if (roomHub != null) await roomHub.DisposeAsync();
-        if (channel != null) await channel.ShutdownAsync();
-        roomHub = null; channel = null;
+        if (isDisconnecting) return;
+        isDisconnecting = true;
+
+        try
+        {
+            if (roomHub != null)
+            {
+                await roomHub.DisposeAsync();
+                roomHub = null;
+            }
+
+            if (channel != null)
+            {
+                await channel.ShutdownAsync();
+                channel = null;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"DisconnectAsync error: {e}");
+        }
     }
 
     //　破棄処理 
     async void OnDestroy()
     {
-        DisconnectAsync();
+        DisconnectAsync().Forget();
     }
 
     //　入室

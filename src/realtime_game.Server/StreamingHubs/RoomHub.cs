@@ -82,7 +82,7 @@ namespace realtime_game.Server.StreamingHubs
         // 切断時の処理
         protected override ValueTask OnDisconnected()
         {
-            //LeaveAsync();
+            _ = LeaveAsync();
             return default;
         }
 
