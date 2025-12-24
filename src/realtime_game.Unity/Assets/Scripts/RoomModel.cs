@@ -9,6 +9,7 @@ using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+using System.Collections.Generic;
 
 public class RoomModel : BaseModel,IRoomHubReceiver
 {
@@ -32,6 +33,7 @@ public class RoomModel : BaseModel,IRoomHubReceiver
 
     //€”õŠ®—¹’Ê’m
     public Action<Guid, bool> OnReadyStateChangedReceived { get; set; }
+    public Dictionary<Guid, bool> ReadyStates = new();
 
     //‘Sˆõ€”õŠ®—¹
     public Action OnAllReadyReceived;
@@ -81,6 +83,7 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     {
         if (OnJoinedUser != null)
         {
+            ReadyStates[user.ConnectionId] = false;
             OnJoinedUser(user);
         }
 
@@ -145,8 +148,9 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     //€”õŠ®—¹’Ê’m
     public void OnReady(Guid connectionId, bool isReady)
     {
-        Debug.Log("OnReady received");
+        Debug.Log($"OnReady received {connectionId} : {isReady}");
 
+        ReadyStates[connectionId] = isReady;
         OnReadyStateChangedReceived?.Invoke(connectionId, isReady);
     }
 

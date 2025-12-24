@@ -2,8 +2,10 @@ using DG.Tweening;
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -23,6 +25,8 @@ public class GameDirector : MonoBehaviour
 
     Dictionary<Guid, string> memberNames = new();
 
+    Dictionary<Guid, MemberUI> memberUIList = new();
+
     int myUserId; //自分のユーザーID
     User myself; //自分のユーザー情報を保持
 
@@ -30,8 +34,30 @@ public class GameDirector : MonoBehaviour
 
     Guid myConnectionId;
 
-    [SerializeField] Text memberText;
+    [SerializeField] GameObject memberItemPrefab;
+    [SerializeField] Transform memberListParent;
 
+    bool isMyReady = false;
+
+
+    public Text countdownText;//始まるまでのカウントダウン
+    bool isCountingDown = false;
+
+    //制限時間
+    public Text timelimitText;
+    public int timelimit = 10;
+
+    //UI
+    public GameObject Retry;
+    public GameObject Join;
+    public GameObject Leave;
+    public GameObject InputRoomName;
+    public GameObject InputId;
+    public GameObject Panel;
+    public GameObject RoomUsers;
+    public GameObject Ready;
+
+    public Text endText;
 
     async void Start()
     {
@@ -51,16 +77,19 @@ public class GameDirector : MonoBehaviour
         roomModel.OnContactReceived += this.OnContactReceived;
 
         //準備完了
-        roomModel.OnReadyStateChangedReceived += (id, ready) =>
-        {
-            Debug.Log($"{id} Ready:{ready}");
-        };
+        roomModel.OnReadyStateChangedReceived += this.OnReadyStateChanged;
+
+        roomModel.OnAllReadyReceived += this.OnAllReady;
 
         //接続
         await roomModel.ConnectAsync();
 
         // 自分の ConnectionId を保存
         myConnectionId =  roomModel.ConnectionId;
+
+        endText.gameObject.SetActive(false);
+        Retry.SetActive(false);
+
     }
 
     public async void JoinRoom()
@@ -81,8 +110,8 @@ public class GameDirector : MonoBehaviour
             }
 
             //入室
-            //await roomModel.JoinAsync("sampleRoom", myUserId);
-            var joinedUsers = roomModel.JoinAsync("sampleRoom", myUserId);
+            await roomModel.JoinAsync("sampleRoom", myUserId);
+            //var joinedUsers = roomModel.JoinAsync("sampleRoom", myUserId);
 
             InvokeRepeating(nameof(Move), 1f, 0.1f);
         }
@@ -93,14 +122,14 @@ public class GameDirector : MonoBehaviour
     {
         //Debug.Log("Connection...");
 
-        memberNames[user.ConnectionId] = user.UserData.Name;
-        RefreshMemberUI();
-
         //すでに表示済みのユーザーは追加しない
         if (characterList.ContainsKey(user.ConnectionId))
         {
             return;
         }
+
+        var ui = CreateMemberUI(user.UserData.Name);
+        memberUIList[user.ConnectionId] = ui;
 
         //自分は追加しない
         if (user.UserData.Id == myUserId)
@@ -139,7 +168,7 @@ public class GameDirector : MonoBehaviour
             //退出
             await roomModel.LeaveAsync();
 
-            memberText.text = "";
+            //memberText.text = "";
 
             //初期位置,回転に戻す
             //rg.position = Vector3.zero;
@@ -148,6 +177,7 @@ public class GameDirector : MonoBehaviour
             foreach (var obj in characterList.Values)
             {
                 Destroy(obj);
+
             }
             characterList.Clear();
         }
@@ -167,14 +197,20 @@ public class GameDirector : MonoBehaviour
             Destroy(obj);
             characterList.Remove(Id);
 
-            memberNames.Remove(Id);
-            RefreshMemberUI();
+            //memberNames.Remove(Id);
+            //RefreshMemberUI();
 
             Debug.Log("[OnLeavedUser] Destroyed.");
         }
         else
         {
             Debug.LogWarning($"[OnLeavedUser] No Key: {Id}");
+        }
+
+        if (memberUIList.TryGetValue(Id, out var ui))
+        {
+            Destroy(ui.gameObject);
+            memberUIList.Remove(Id);
         }
     }
 
@@ -238,21 +274,122 @@ public class GameDirector : MonoBehaviour
     }
 
     //参加者一覧
-    void RefreshMemberUI()
-    {
-        //memberText.text += name;
+    //void RefreshMemberUI()
+    //{
+    //    //memberText.text += name;
 
-        memberText.text = "";
-        foreach (var name in memberNames.Values)
-        {
-            memberText.text += name + "\n";
-        }
+    //    memberText.text = "";
+    //    foreach (var name in memberNames.Values)
+    //    {
+    //        memberText.text += name + "\n";
+    //    }
+    //}
+
+    public MemberUI CreateMemberUI(string userName)
+    {
+        // UIプレハブ生成
+        GameObject obj = Instantiate(memberItemPrefab, memberListParent);
+
+        // MemberUI コンポーネント取得
+        var ui = obj.GetComponent<MemberUI>();
+
+        // 初期表示
+        ui.nameText.text = userName;
+        ui.readyText.text = "Not Ready";
+        ui.readyText.color = Color.gray;
+
+        return ui;
     }
 
     //準備完了
     public async void OnClickReady()
     {
-        Debug.Log("READY");
-        await roomModel.SetReadyAsync(true);
+        isMyReady = !isMyReady;
+
+        Debug.Log($"READY TOGGLE: {isMyReady}");
+        //await roomModel.SetReadyAsync(true);
+        // サーバー送信
+        await roomModel.SetReadyAsync(isMyReady);
+
+        // 自分のUIは更新
+        OnReadyStateChanged(myConnectionId, isMyReady);
+    }
+
+    public void OnReadyStateChanged(Guid connectionId, bool isReady)
+    {
+        if (!memberUIList.ContainsKey(connectionId))
+            return;
+
+        var ui = memberUIList[connectionId];
+        ui.readyText.text = isReady ? "Ready" : "Not Ready";
+        ui.readyText.color = isReady ? Color.green : Color.gray;
+    }
+
+    public void OnAllReady()
+    {
+        //Debug.Log("全員Ready！");
+        //StartCoroutine(StartCountdown());
+
+        if (isCountingDown) return;
+
+        Debug.Log("全員Ready！カウントダウン開始");
+        StartCoroutine(CountdownCoroutine());
+    }
+
+    IEnumerator CountdownCoroutine()
+    {
+        isCountingDown = true;
+
+        countdownText.gameObject.SetActive(true);
+
+        for (int i = 5; i > 0; i--)
+        {
+            countdownText.text = i.ToString();
+            yield return new WaitForSeconds(1f);
+        }
+
+        countdownText.text = "START!";
+        yield return new WaitForSeconds(1f);
+
+        countdownText.gameObject.SetActive(false);
+
+        StartGame();
+    }
+
+    void StartGame()
+    {
+        Debug.Log("ゲーム開始");
+        InputBlocker.isBlocked = false;
+        //UIを非表示
+        Join.SetActive(false);
+        Leave.SetActive(false);
+        InputRoomName.SetActive(false);
+        InputId.SetActive(false);
+        Panel.SetActive(false);
+        RoomUsers.SetActive(false);
+        Ready.SetActive(false);
+
+        StartCoroutine(TimeLimitCoroutine());
+    }
+
+    IEnumerator TimeLimitCoroutine()
+    {
+        while (timelimit >= 0)
+        {
+            timelimitText.text = timelimit.ToString();
+            yield return new WaitForSeconds(1f);
+            timelimit--;
+        }
+
+        Retry.SetActive(true);
+        timelimitText.gameObject.SetActive(false);
+        endText.gameObject.SetActive(true);
+        InputBlocker.isBlocked = true; //操作を受け付けなくする
+    }
+
+    public void RetryButtom()
+    {
+        //シーンの再読み込み
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

@@ -3,6 +3,6 @@ using UnityEngine;
 public static class InputBlocker
 {
     
-    public static bool isBlocked = false;
+    public static bool isBlocked = true;
     
 }

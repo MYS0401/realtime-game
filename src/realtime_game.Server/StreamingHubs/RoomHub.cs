@@ -137,7 +137,7 @@ namespace realtime_game.Server.StreamingHubs
 
             if (allReady)
             {
-                roomContext.Group.Except([this.ConnectionId]).OnAllReady();
+                roomContext.Group.All.OnAllReady();
             }
 
             return Task.CompletedTask;
