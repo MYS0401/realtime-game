@@ -341,6 +341,9 @@ public class GameDirector : MonoBehaviour
 
     IEnumerator CountdownCoroutine(int seconds)
     {
+        Join.SetActive(false);
+        Leave.SetActive(false);
+
         isCountingDown = true;
 
         countdownText.gameObject.SetActive(true);
@@ -373,6 +376,9 @@ public class GameDirector : MonoBehaviour
 
         if (countdownCoroutine != null)
         {
+            Join.SetActive(true);
+            Leave.SetActive(true);
+
             StopCoroutine(countdownCoroutine);
             countdownCoroutine = null;
         }
