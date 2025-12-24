@@ -41,6 +41,7 @@ public class GameDirector : MonoBehaviour
 
 
     public Text countdownText;//始まるまでのカウントダウン
+    Coroutine countdownCoroutine;
     bool isCountingDown = false;
 
     //制限時間
@@ -78,8 +79,10 @@ public class GameDirector : MonoBehaviour
 
         //準備完了
         roomModel.OnReadyStateChangedReceived += this.OnReadyStateChanged;
-
         roomModel.OnAllReadyReceived += this.OnAllReady;
+
+        roomModel.OnCountdownStartReceived += StartCountdown;
+        roomModel.OnCountdownCancelReceived += CancelCountdown;
 
         //接続
         await roomModel.ConnectAsync();
@@ -333,10 +336,10 @@ public class GameDirector : MonoBehaviour
         if (isCountingDown) return;
 
         Debug.Log("全員Ready！カウントダウン開始");
-        StartCoroutine(CountdownCoroutine());
+        StartCoroutine(CountdownCoroutine(5));
     }
 
-    IEnumerator CountdownCoroutine()
+    IEnumerator CountdownCoroutine(int seconds)
     {
         isCountingDown = true;
 
@@ -354,6 +357,28 @@ public class GameDirector : MonoBehaviour
         countdownText.gameObject.SetActive(false);
 
         StartGame();
+    }
+
+    void StartCountdown(int seconds)
+    {
+        if (countdownCoroutine != null)
+            StopCoroutine(countdownCoroutine);
+
+        countdownCoroutine = StartCoroutine(CountdownCoroutine(seconds));
+    }
+
+    void CancelCountdown()
+    {
+        Debug.Log("カウントダウン中止");
+
+        if (countdownCoroutine != null)
+        {
+            StopCoroutine(countdownCoroutine);
+            countdownCoroutine = null;
+        }
+
+        // UIを元に戻す
+        countdownText.text = "";
     }
 
     void StartGame()

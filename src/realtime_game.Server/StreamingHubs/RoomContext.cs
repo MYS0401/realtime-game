@@ -7,6 +7,7 @@ namespace realtime_game.Server.StreamingHubs
     {
         public Guid Id { get; } // ルームID
         public string Name { get; } // ルーム名
+        public bool IsCountingDown { get; set; } //カウントダウン
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; } // グループ
         public Dictionary<Guid, RoomUserData> RoomUserDataList { get; } =
             new Dictionary<Guid, RoomUserData>(); // ユーザデータ一覧

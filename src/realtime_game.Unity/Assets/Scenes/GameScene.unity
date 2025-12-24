@@ -1078,7 +1078,14 @@ MonoBehaviour:
   countdownText: {fileID: 1737024173}
   timelimitText: {fileID: 146851537}
   timelimit: 10
-  retry: {fileID: 192268624}
+  Retry: {fileID: 192268624}
+  Join: {fileID: 1829627205}
+  Leave: {fileID: 22789269}
+  InputRoomName: {fileID: 2135389454}
+  InputId: {fileID: 1065150745}
+  Panel: {fileID: 2078104669}
+  RoomUsers: {fileID: 1955498292}
+  Ready: {fileID: 1941226068}
   endText: {fileID: 1759176009}
 --- !u!4 &559886516
 Transform:
@@ -2343,7 +2350,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1565532948
 Transform:
   m_ObjectHideFlags: 0
@@ -3917,16 +3924,16 @@ RectTransform:
   m_GameObject: {fileID: 2078104669}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.93343, z: 1}
+  m_LocalScale: {x: 2.969, y: 3.9317498, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1337795077}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 344, y: 19}
-  m_SizeDelta: {x: -782, y: -66.33331}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 886, y: -420}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2078104671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4299,13 +4306,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7594046548257926272}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.39297086, y: -0, z: -0, w: 0.91955096}
-  m_LocalPosition: {x: 14.1, y: 62.27, z: -32.31}
+  m_LocalRotation: {x: 0.69631153, y: -0, z: -0, w: 0.7177398}
+  m_LocalPosition: {x: 14.1, y: 136.7, z: 48.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 46.279, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 88.264, y: 0, z: 0}
 --- !u!20 &1174693273036577332
 Camera:
   m_ObjectHideFlags: 0
@@ -4463,7 +4470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1648002229814658729, guid: 6b67d9df6a7da124ba203f9de518cb6a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.1103797
+      value: -5.6
       objectReference: {fileID: 0}
     - target: {fileID: 1648002229814658729, guid: 6b67d9df6a7da124ba203f9de518cb6a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4520,7 +4527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2568497624729915915, guid: 26768c1ce98a78648b8fa9b84a670998, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.272373
+      value: -7.77
       objectReference: {fileID: 0}
     - target: {fileID: 2568497624729915915, guid: 26768c1ce98a78648b8fa9b84a670998, type: 3}
       propertyPath: m_LocalPosition.z

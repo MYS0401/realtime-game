@@ -38,6 +38,12 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         //全員準備完了通知
         void OnAllReady();
 
+        //カウントダウン開始
+        void OnCountdownStart(int seconds);
+
+        //カウントダウン中止
+        void OnCountdownCancel();
+
     }
 
 }

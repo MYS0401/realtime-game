@@ -38,6 +38,9 @@ public class RoomModel : BaseModel,IRoomHubReceiver
     //全員準備完了
     public Action OnAllReadyReceived;
 
+    public Action<int> OnCountdownStartReceived { get; set; }
+    public Action OnCountdownCancelReceived { get; set; }
+
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
@@ -159,6 +162,7 @@ public class RoomModel : BaseModel,IRoomHubReceiver
         Debug.Log("SetReady");
 
         await roomHub.SetReadyAsync(isReady);
+
     }
 
     //全員準備完了通知
@@ -167,6 +171,15 @@ public class RoomModel : BaseModel,IRoomHubReceiver
         OnAllReadyReceived?.Invoke();
     }
 
+    public void OnCountdownStart(int seconds)
+    {
+        OnCountdownStartReceived?.Invoke(seconds);
+    }
+
+    public void OnCountdownCancel()
+    {
+        OnCountdownCancelReceived?.Invoke();
+    }
 
 }
 

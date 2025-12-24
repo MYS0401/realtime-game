@@ -120,6 +120,29 @@ namespace realtime_game.Server.StreamingHubs
             roomContext.Group.Except([this.ConnectionId]).OnContact(myId, targetConnectionId);
         }
 
+        ////準備完了通知
+        //public Task SetReadyAsync(bool isReady)
+        //{
+        //    Console.WriteLine($"[Server] SetReadyAsync {ConnectionId} : {isReady}");
+
+        //    var user = roomContext.RoomUserDataList[this.ConnectionId];
+        //    user.IsReady = isReady;
+
+        //    // 全員に通知
+        //    roomContext.Group.Except([this.ConnectionId]).OnReady(this.ConnectionId, isReady);
+
+        //    // 全員準備完了チェック
+        //    bool allReady = roomContext.RoomUserDataList.Values
+        //        .All(u => u.IsReady);
+
+        //    if (allReady)
+        //    {
+        //        roomContext.Group.All.OnAllReady();
+        //    }
+
+        //    return Task.CompletedTask;
+        //}
+
         //準備完了通知
         public Task SetReadyAsync(bool isReady)
         {
@@ -128,16 +151,23 @@ namespace realtime_game.Server.StreamingHubs
             var user = roomContext.RoomUserDataList[this.ConnectionId];
             user.IsReady = isReady;
 
-            // 全員に通知
-            roomContext.Group.Except([this.ConnectionId]).OnReady(this.ConnectionId, isReady);
+            // Ready状態を全員に通知
+            roomContext.Group.All.OnReady(this.ConnectionId, isReady);
 
-            // 全員準備完了チェック
-            bool allReady = roomContext.RoomUserDataList.Values
-                .All(u => u.IsReady);
+            bool allReady = roomContext.RoomUserDataList.Values.All(u => u.IsReady);
 
-            if (allReady)
+            // 全員Ready & まだカウントダウンしてない
+            if (allReady && !roomContext.IsCountingDown)
             {
-                roomContext.Group.All.OnAllReady();
+                roomContext.IsCountingDown = true;
+                roomContext.Group.All.OnCountdownStart(5);
+            }
+
+            // Ready解除された & カウントダウン中
+            if (!isReady && roomContext.IsCountingDown)
+            {
+                roomContext.IsCountingDown = false;
+                roomContext.Group.All.OnCountdownCancel();
             }
 
             return Task.CompletedTask;
